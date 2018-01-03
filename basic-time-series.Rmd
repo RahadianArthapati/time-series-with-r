@@ -1,5 +1,5 @@
 ---
-title: "basic-time-series"
+title: "Basic Time Series"
 author: "Rahadian Arthapati"
 date: "1/3/2018"
 output: html_document
@@ -8,23 +8,64 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Introduction
+Time series is a sequence of data in chronological order. Data is commonly recorded sequentially, over time. 
 
-## R Markdown
+```{r}
+library(tidyr)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+data(AirPassengers)
+class(AirPassengers)
 ```
 
-## Including Plots
+```{r}
+# Plot AirPassengers
+plot(AirPassengers)
 
-You can also embed plots, for example:
+# View the start and end dates of AirPassengers
+start(AirPassengers)
+end(AirPassengers)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Use time(), deltat(), frequency(), and cycle() with AirPassengers 
+time(AirPassengers)
+deltat(AirPassengers)
+frequency(AirPassengers)
+cycle(AirPassengers)
+
+plot(AirPassengers)
+abline(reg=lm(AirPassengers~time(AirPassengers)))
+
+plot(aggregate(AirPassengers,FUN = mean))
+boxplot(AirPassengers~cycle(AirPassengers))
+
+```
+# When is the sampling frequency exact?
+
+The sampling frequency is often only approximate and the interval between observations is not quite a fixed unit. For example, there are usually 365 days in a year based on the Gregorian calendar. However, (almost) every four years there are 366 days (leap years).
+
+As a simplifying assumption, we often ignore these small discrepancies and proceed as though the sampling frequency and observation intervals are fixed constants. Typically, our results will not be sensitive to approximation when the underlying process is not changing too quickly.
+
+# Missing values
+```{r}
+# Plot the AirPassengers data
+plot(AirPassengers)
+
+# Compute the mean of AirPassengers
+# Impute mean values to NA in AirPassengers
+AirPassengers[85:96] <- mean(AirPassengers, na.rm = T)
+
+# Generate another plot of AirPassengers
+plot(AirPassengers)
+
+# Add the complete AirPassengers data to your plot
+rm(AirPassengers)
+points(AirPassengers, type = "l", col = 2, lty = 3)
+```
+# Creating a time series object with ts()
+```{r}
+data_vector = c(10,5,6,8,9,7,4,6,10,5,6,8,9,7,4,6,10,5,6,8,9,7,4,6,10,5,6,8,9,7,4,6)
+time_series = ts(data_vector, start = 2000,end = 2018, frequency = 2)
+is.ts(time_series)
+plot(time_series)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
